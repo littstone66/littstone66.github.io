@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>憧憬 -wangpenglei</title>
+  
+  <subtitle>夕阳西落</subtitle>
+  <link href="http://example.com/atom.xml" rel="self"/>
+  
+  <link href="http://example.com/"/>
+  <updated>2023-10-02T02:49:52.998Z</updated>
+  <id>http://example.com/</id>
+  
+  <author>
+    <name>王彭磊</name>
+    
+  </author>
+  
+  <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>rabbitmq疑问</title>
+    <link href="http://example.com/2023/10/02/rabbitmq%E7%96%91%E9%97%AE/"/>
+    <id>http://example.com/2023/10/02/rabbitmq%E7%96%91%E9%97%AE/</id>
+    <published>2023-10-02T02:49:19.000Z</published>
+    <updated>2023-10-02T02:49:52.998Z</updated>
+    
+    <content type="html"><![CDATA[<p>1：队列是如何保证服务器重启之后数据还可以恢复的？<br>    1：持久化队列<br>    2：持久化消息<br>    3：持久化队列和持久化消息相结合</p><pre><code>队列持久化保存的只是队列的元数据，队列中的消息要想持久化需要声明这个消息是持久化的</code></pre><p>2：这些数据保存在了那个位置？<br>    持久化的数据保存在：C:\Users\lei\AppData\Roaming\RabbitMQ\db位置</p><p>3：rabbitmq后台管理页面什么意思<br>4：将queues和Exchange绑定的作用是什么？<br>    有不同的类型，绑定是为了将消息通过交换机传递给队列</p><p>5：@RabbitHandler和@RabbitListener<br>    @RabbitHandler用于：方法级别<br>    @RabbitListener用于：类或者方法级别<br>如果@RabbitListener用于方法级别则由这个方法监听并执行接收到的消息，如果这个参数与被接收到的<br>消息参数类型不匹配那么就会发生异常<br>    将@RabbitListener作用于类级别，并用@RabbitHandler作用于方法，那么该类所有的方法都是执行者，他俩一般一起使用</p><p>6：springboot继承rabbitmq之后如果消费端先启动就会报错</p><h2 id="交换机类型"><a href="#交换机类型" class="headerlink" title="交换机类型"></a>交换机类型</h2><ol><li><p>Direct Exchange（直连交换机）:</p><p>特点：将消息直接路由到与消息的路由键完全匹配的队列。<br>用途：适用于一对一的消息分发。</p></li><li><p>Fanout Exchange（扇出交换机）</p><p>特点：将消息广播到所有与交换机绑定的队列，忽略消息的路由键。<br>用途：适用于消息广播场景，不需要考虑消息的路由</p></li><li><p>Topic Exchange（主题交换机）</p><p>特点：根据消息的路由键和交换机与队列的绑定键之间的模式匹配规则，将消息路由到一个或多个队列。<br>用途：适用于复杂的消息路由和筛选，可以根据通配符模式匹配路由键。</p></li></ol><h2 id="RabbitTemplate作用"><a href="#RabbitTemplate作用" class="headerlink" title="RabbitTemplate作用"></a>RabbitTemplate作用</h2><p>简化RabbitMQ的消息发送和接收操作，提供了一种更高级别的抽象来与RabbitMQ进行交互。</p><ol><li>消息发送</li><li>消息接收</li><li>消息转换</li><li>异常处理</li><li>回调机制</li><li>消息确认</li><li>发送消息到指定的交换机和队列</li><li>消息发送超时处理</li></ol><h2 id="两个回调函数"><a href="#两个回调函数" class="headerlink" title="两个回调函数"></a>两个回调函数</h2><ol><li>ConfirmCallback</li><li>RetrunCallback</li></ol><p>消息推送有四种情况</p><p>消息推送到server，但是在server里找不到交换机触发：ConfirmCallback<br>消息推送到server，找到交换机了，但是没找到队列触发：ConfirmCallback 与 RetrunCallback<br>消息推送到sever，交换机和队列啥都没找到触发：ConfirmCallback<br>消息推送成功触发：ConfirmCallback </p><h2 id="SimpleMessageListenerContainer作用"><a href="#SimpleMessageListenerContainer作用" class="headerlink" title="SimpleMessageListenerContainer作用"></a>SimpleMessageListenerContainer作用</h2><p>简化了rabbitmq原生提供的消息监听和处理过程，方便开发者开发，用于监听 RabbitMQ 消息队列并执行消息的消费操作</p><ol><li>消息监听</li><li>线程管理</li><li>消息消费者的创建和维护</li><li>消息的确认与拒绝</li><li>消息容器的生命周期管理</li><li>并发处理</li><li>事务管理</li><li>消息预取配置</li><li>Topic Exchange（主题交换机）:</li></ol><h2 id="消息确认"><a href="#消息确认" class="headerlink" title="消息确认"></a>消息确认</h2><p>在rabbitmq中消息确认分为两种，生产者确认和消费者确认</p><p>生产者确认：确保消息是否正确的发送到了rabbitmq服务器</p><p>​同步：发送到rabbitmq一条，rabbitmq确认一条</p><p>​异步：发送的同时不用确认，等到rabbitmq确认确实收到消息之后再通知rabbitmq收到了消息</p><p>消费者确认：消息由rabbitmq服务器发送到消费者，消费者确认消息是否成功接收并处理</p><h2 id="ChannelAwareMessageListener"><a href="#ChannelAwareMessageListener" class="headerlink" title="ChannelAwareMessageListener"></a>ChannelAwareMessageListener</h2><p>用于处理 RabbitMQ 消息的监听和处理。它是 <code>MessageListener</code> 接口的一个扩展，提供了更多关于消息处理的控制和信息。</p><ol><li><strong>消息监听</strong>：与 <code>MessageListener</code> 一样，<code>ChannelAwareMessageListener</code> 允许您注册为消息监听器，以便处理从 RabbitMQ 队列接收到的消息。</li><li><strong>手动消息确认</strong>：与普通的 <code>MessageListener</code> 不同，<code>ChannelAwareMessageListener</code> 允许您手动控制消息的确认（acknowledgment）。这意味着您可以决定何时确认消息，以及何时拒绝消息。这种控制对于一些高级的消息处理场景非常有用。</li><li><strong>获得消息通道</strong>：通过 <code>ChannelAwareMessageListener</code>，您可以获得消息传递时的消息通道（<code>Channel</code>）。这允许您在消息处理期间执行更多的 RabbitMQ 相关操作，例如声明交换机、绑定队列等。</li><li><strong>处理异常</strong>：<code>ChannelAwareMessageListener</code> 允许您处理在消息处理期间发生的异常。您可以自定义处理方式，例如记录日志、重试消息或将消息发送到死信队列。</li><li><strong>灵活性</strong>：这个接口提供了更多的控制和灵活性，适用于需要更复杂消息处理逻辑的场景。</li></ol><p>通常，如果您的消息处理逻辑需要更多的控制权，例如手动确认消息、执行额外的 RabbitMQ 操作或处理异常情况，那么您可以选择实现 <code>ChannelAwareMessageListener</code> 接口以满足这些需求。否则，如果只需要基本的消息监听和处理功能，<code>MessageListener</code> 接口通常已经足够了。</p><h2 id="MessageListener和ChannelAwareMessageListener"><a href="#MessageListener和ChannelAwareMessageListener" class="headerlink" title="MessageListener和ChannelAwareMessageListener"></a>MessageListener和ChannelAwareMessageListener</h2><p><code>MessageListener</code> 和 <code>ChannelAwareMessageListener</code> 是 Spring AMQP 中用于处理 RabbitMQ 消息的两个不同的接口，它们之间的主要区别在于处理消息时的控制程度和功能，ChannelAwareMessageListener继承MessageListener</p><ol><li><strong>MessageListener</strong>：<ul><li><strong>消息监听和处理</strong>：<code>MessageListener</code> 接口定义了一个 <code>onMessage(Message message)</code> 方法，用于处理从消息队列接收到的消息。您可以在这个方法中编写消息处理逻辑。</li><li><strong>自动确认</strong>：<code>MessageListener</code> 通常使用自动确认（acknowledgment）机制。这意味着一旦消息被成功处理，它将自动被确认并从队列中删除。如果处理失败，消息将被重新排队。</li></ul></li><li><strong>ChannelAwareMessageListener</strong>：<ul><li><strong>消息监听和处理</strong>：<code>ChannelAwareMessageListener</code> 也定义了一个 <code>onMessage(Message message, Channel channel)</code> 方法，用于处理消息。但是，与 <code>MessageListener</code> 不同，它提供了更多的控制和功能。</li><li><strong>手动确认</strong>：通过 <code>Channel</code> 参数，您可以手动确认消息的处理结果。这允许您决定何时确认消息，以及何时拒绝消息。这种手动确认对于高级的消息处理场景非常有用。</li><li><strong>消息通道访问</strong>：通过 <code>Channel</code> 参数，您可以访问消息传递时的消息通道。这使您可以在消息处理期间执行更多的 RabbitMQ 操作，例如声明交换机、绑定队列等。</li><li><strong>更多的灵活性</strong>：<code>ChannelAwareMessageListener</code> 提供了更高级的特性和更多的控制选项，适用于需要更复杂消息处理逻辑的场景。</li></ul></li></ol><p>因此，选择使用哪个接口取决于您的需求和应用程序的复杂性。如果您需要简单的消息处理逻辑，并且满足自动确认的情况，可以使用 <code>MessageListener</code>。如果您需要更高级的消息处理控制和额外的功能，可以选择 <code>ChannelAwareMessageListener</code>。通常，对于大多数基本的消息队列应用场景，<code>MessageListener</code> 已经足够了。</p><h2 id="SimpleMessageListenerContainer"><a href="#SimpleMessageListenerContainer" class="headerlink" title="SimpleMessageListenerContainer"></a>SimpleMessageListenerContainer</h2><p>用于管理rabbitmq的消息监听，可以用于绑定监听哪个队列，用哪个类来作为监听器用作配置监听信息，但是监听到消息之后具体执行什么操作使用MessageListener和ChannelAwareMessageListener接口</p><h1 id="！！！"><a href="#！！！" class="headerlink" title="！！！"></a>！！！</h1><p>未创建队列或者本地rabbitmq中没有队列或者交换机时，这时如果直接启动消费端，那么就会直接报错，如何处理？？？</p>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;1：队列是如何保证服务器重启之后数据还可以恢复的？&lt;br&gt;    1：持久化队列&lt;br&gt;    2：持久化消息&lt;br&gt;    3：持久化队列和持久化消息相结合&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;队列持久化保存的只是队列的元数据，队列中的消息要想持久化需要声明这个消息是持久化的
+</summary>
+      
+    
+    
+    
+    
+    <category term="rabbit" scheme="http://example.com/tags/rabbit/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Hello World</title>
+    <link href="http://example.com/2023/10/01/hello-world/"/>
+    <id>http://example.com/2023/10/01/hello-world/</id>
+    <published>2023-10-01T13:17:27.389Z</published>
+    <updated>2023-10-01T13:17:27.390Z</updated>
+    
+    <content type="html"><![CDATA[<p>Welcome to <a href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p><h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/writing.html">Writing</a></p><h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/server.html">Server</a></p><h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/generating.html">Generating</a></p><h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;Welcome to &lt;a href=&quot;https://hexo.io/&quot;&gt;Hexo&lt;/a&gt;! This is your very first post. Check &lt;a href=&quot;https://hexo.io/docs/&quot;&gt;documentation&lt;/a&gt; for</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+</feed>
