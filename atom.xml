@@ -6,7 +6,7 @@
   <link href="http://example.com/atom.xml" rel="self"/>
   
   <link href="http://example.com/"/>
-  <updated>2023-10-02T11:26:33.054Z</updated>
+  <updated>2023-10-03T06:13:23.809Z</updated>
   <id>http://example.com/</id>
   
   <author>
@@ -15,6 +15,34 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>建站史</title>
+    <link href="http://example.com/2023/10/03/%E5%BB%BA%E7%AB%99%E5%8F%B2/"/>
+    <id>http://example.com/2023/10/03/%E5%BB%BA%E7%AB%99%E5%8F%B2/</id>
+    <published>2023-10-03T06:04:26.000Z</published>
+    <updated>2023-10-03T06:13:23.809Z</updated>
+    
+    <content type="html"><![CDATA[<p>2023-10-2</p><ul><li>初步搭建基本框架</li><li>添加了评论模块</li><li>添加 <code>hexo-offline-popup</code> 插件，加速博客的响应速度</li><li>添加建站信息等</li><li>使用 <code>jsdelivr + github</code> 作为图床，加快网站载入资源的速度</li><li>将域名与 <code>github pages</code> 绑定</li><li>……</li></ul><p>2023-10-1</p><ul><li>初步构思</li></ul>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;2023-10-2&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;初步搭建基本框架&lt;/li&gt;
+&lt;li&gt;添加了评论模块&lt;/li&gt;
+&lt;li&gt;添加 &lt;code&gt;hexo-offline-popup&lt;/code&gt; 插件，加速博客的响应速度&lt;/li&gt;
+&lt;li&gt;添加建站信息等&lt;/li&gt;
+&lt;li&gt;使用 &lt;c</summary>
+      
+    
+    
+    
+    
+    <category term="info" scheme="http://example.com/tags/info/"/>
+    
+  </entry>
   
   <entry>
     <title>rabbitmq疑问</title>
